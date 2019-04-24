@@ -621,7 +621,7 @@ def process_corpus(dirname, format='json', lemmaReplacements=None, tag=None,
                 if 'year_to' in docMeta and int(docMeta['year_to']) > yearRange[1]:
                     continue
             for s, bLast in iterSent.get_sentences(fnameFull):
-                if 'words' not in s:
+                if 'words' not in s or 'lang' not in s or s['lang'] != 0:
                     continue
                 for word in s['words']:
                     if 'wtype' not in word or word['wtype'] != 'word' or 'wf' not in word or len(word['wf']) <= 0:
@@ -710,26 +710,27 @@ def write_word2lemma(word2lemma, fnameOut):
 
 
 if __name__ == '__main__':
-    lang = 'mdf_main'
+    lang = 'udm_vk'
     # freqDict, lemmaDict, taggedLemmaDict = simulate_lemma_distibution()
 
     # corpusDir = 'J:/Corpus/NewCorpusPlatform/tsakorpus/tsakorpus_repo/corpus/udmurt'
+    corpusDir = 'J:/Corpus/NewCorpusPlatform/tsakorpus/tsakorpus_repo/corpus/udmurt_social_networks'
     # corpusDir = 'J:/Corpus/NewCorpusPlatform/tsakorpus/tsakorpus_repo/corpus/erzya'
-    corpusDir = 'J:/Corpus/NewCorpusPlatform/tsakorpus/tsakorpus_repo/corpus/moksha'
+    # corpusDir = 'J:/Corpus/NewCorpusPlatform/tsakorpus/tsakorpus_repo/corpus/moksha'
     # corpusDir = 'J:/Corpus/NewCorpusPlatform/tsakorpus/tsakorpus_repo/corpus/komi-zyrian'
-    # lemmaReplacements = load_lemma_replacements(os.path.join(lang, 'lemma_replacements.csv'))
-    # freqDictWf, freqDictLex, word2lemma, unanalyzed = process_corpus(corpusDir,
-    #                                                                  format='json-gzip', lemmaReplacements=lemmaReplacements,
-    #                                                                  tag={'gr.add': 'rus'},
-    #                                                                  yearRange=[1975, 2020])
-    # write_freq_dict(freqDictWf, os.path.join(lang, 'wordlist.csv'))
-    # write_freq_dict(freqDictLex, os.path.join(lang, 'lexlist.csv'))
-    # write_word2lemma(word2lemma, os.path.join(lang, 'word2lemma.csv'))
-    # write_unanalyzed(unanalyzed, os.path.join(lang, 'unanalyzed.csv'))
-    freqDictWf, freqDictLex, word2lemma, unanalyzed = load_data(os.path.join(lang, 'wordlist.csv'),
-                                                                os.path.join(lang, 'lexlist.csv'),
-                                                                os.path.join(lang, 'word2lemma.csv'),
-                                                                os.path.join(lang, 'unanalyzed.csv'))
+    lemmaReplacements = load_lemma_replacements(os.path.join(lang, 'lemma_replacements.csv'))
+    freqDictWf, freqDictLex, word2lemma, unanalyzed = process_corpus(corpusDir,
+                                                                     format='json-gzip', lemmaReplacements=lemmaReplacements,
+                                                                     tag={'gr.add': 'rus'},
+                                                                     yearRange=[1975, 2020])
+    write_freq_dict(freqDictWf, os.path.join(lang, 'wordlist.csv'))
+    write_freq_dict(freqDictLex, os.path.join(lang, 'lexlist.csv'))
+    write_word2lemma(word2lemma, os.path.join(lang, 'word2lemma.csv'))
+    write_unanalyzed(unanalyzed, os.path.join(lang, 'unanalyzed.csv'))
+    # freqDictWf, freqDictLex, word2lemma, unanalyzed = load_data(os.path.join(lang, 'wordlist.csv'),
+    #                                                             os.path.join(lang, 'lexlist.csv'),
+    #                                                             os.path.join(lang, 'word2lemma.csv'),
+    #                                                             os.path.join(lang, 'unanalyzed.csv'))
     write_unanalyzed_by_freq(unanalyzed, freqDictWf, os.path.join(lang, 'unanalyzed_by_freq.csv'))
     # freqDict = load_freq_wordlist(os.path.join(lang, 'wordlist.csv'))
     # mentionDict = load_year_list(os.path.join(lang, 'lemmata_first_mentions.csv'))
@@ -802,6 +803,17 @@ if __name__ == '__main__':
     #                                               5: 26 / 72,
     #                                               6: 26 / 72
     #                                               })
+    # For kpv_main:
+    # write_adjustments_file(os.path.join(lang, 'plot_adjustments.csv'),
+    #                        freqDictWf, unanalyzed, word2lemma,
+    #                        unparsed_freq_counts={1: math.floor(10414 * 0.83),
+    #                                              2: math.floor(1977 * 0.81),
+    #                                              3: math.floor(745 * 0.9)
+    #                                              },
+    #                        tagged_shares_by_freq={1: 33 / 83,
+    #                                               2: 32 / 81,
+    #                                               3: 40 / 90
+    #                                               })
 
     # tagged_share(freqDict, lemmaDict, taggedLemmaDict,
     #              os.path.join(lang, 'loan_share.csv'),
@@ -817,7 +829,7 @@ if __name__ == '__main__':
     # tagged_share(freqDictLex,
     #              os.path.join(lang, 'rus_share.csv'))
     # write_lemma_forms_dictribution(freqDict, lemmaDict, os.path.join(lang, 'nforms_for_each_lemma_freq.csv'))
-    # lemma_count_dictribution(freqDict, lemmaDict, os.path.join(lang, 'lemma_counts_by_token_freq.csv'))
+    # lemma_count_dictribution(freqDictWf, freqDictLex, os.path.join(lang, 'lemma_counts_by_token_freq.csv'))
     # print_ambiguous(lemmaDict)
     # for i in range(11):
     #     print(i)
